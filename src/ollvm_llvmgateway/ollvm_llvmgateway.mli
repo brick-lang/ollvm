@@ -19,9 +19,9 @@ val visibility : Ollvm.Ast.visibility -> Llvm.Visibility.t
 
 val cconv : Ollvm.Ast.cconv -> int
 
-val typ_attr : Ollvm.Ast.param_attr -> Llvm.Attribute.t
+val typ_attr : Ollvm.Ast.param_attr -> Llvm.AttrRepr.t
 
-val fn_attr : Ollvm.Ast.fn_attr -> Llvm.Attribute.t
+val fn_attr : Ollvm.Ast.fn_attr -> Llvm.AttrRepr.t
 
 val typ : env -> Ollvm.Ast.typ -> Llvm.lltype
 

@@ -59,49 +59,54 @@ let cconv : Ollvm.Ast.cconv -> int =
   | CC_Coldcc -> cold
   | CC_Cc i   -> assert false
 
-let typ_attr : Ollvm.Ast.param_attr -> Llvm.Attribute.t =
-  let open Llvm.Attribute
-  in function
-  | PARAMATTR_Zeroext   -> Zext
-  | PARAMATTR_Signext   -> Sext
-  | PARAMATTR_Inreg     -> Inreg
-  | PARAMATTR_Byval     -> Byval
-  | PARAMATTR_Sret      -> Structret
-  | PARAMATTR_Noalias   -> Noalias
-  | PARAMATTR_Nocapture -> Nocapture
-  | PARAMATTR_Nest      -> Nest
+let typ_attr : Ollvm.Ast.param_attr -> Llvm.AttrRepr.t =
+  let open Llvm in
+  function
+  | PARAMATTR_Zeroext   -> AttrRepr.Enum(enum_attr_kind "zeroext", 0L)
+  | PARAMATTR_Signext   -> AttrRepr.Enum(enum_attr_kind "signext", 0L)
+  | PARAMATTR_Inreg     -> AttrRepr.Enum(enum_attr_kind "inreg", 0L)
+  | PARAMATTR_Byval     -> AttrRepr.Enum(enum_attr_kind "byval", 0L)
+  | PARAMATTR_Inalloca  -> AttrRepr.Enum(enum_attr_kind "inalloca", 0L)
+  | PARAMATTR_Sret      -> AttrRepr.Enum(enum_attr_kind "sret", 0L)
+  | PARAMATTR_Align i   -> AttrRepr.Enum(enum_attr_kind "align", Int64.of_int i)
+  | PARAMATTR_Noalias   -> AttrRepr.Enum(enum_attr_kind "noalias", 0L)
+  | PARAMATTR_Nocapture -> AttrRepr.Enum(enum_attr_kind "nocapture", 0L)
+  | PARAMATTR_Nest      -> AttrRepr.Enum(enum_attr_kind "nest", 0L)
+  | PARAMATTR_Returned  -> AttrRepr.Enum(enum_attr_kind "returned", 0L)
+  | PARAMATTR_Nonnull   -> AttrRepr.Enum(enum_attr_kind "nonnull", 0L)
+  | PARAMATTR_Dereferenceable i -> AttrRepr.Enum(enum_attr_kind "dereferenceable", Int64.of_int i)
 
-let fn_attr : Ollvm.Ast.fn_attr -> Llvm.Attribute.t =
-  let open Llvm.Attribute
-  in function
-  | FNATTR_Alignstack i     -> Stackalignment i
-  | FNATTR_Alwaysinline     -> Alwaysinline
-  | FNATTR_Builtin          -> assert false
-  | FNATTR_Cold             -> assert false
-  | FNATTR_Inlinehint       -> Inlinehint
-  | FNATTR_Jumptable        -> assert false
-  | FNATTR_Minsize          -> assert false
-  | FNATTR_Naked            -> Naked
-  | FNATTR_Nobuiltin        -> assert false
-  | FNATTR_Noduplicate      -> assert false
-  | FNATTR_Noimplicitfloat  -> Noimplicitfloat
-  | FNATTR_Noinline         -> Noinline
-  | FNATTR_Nonlazybind      -> NonLazyBind
-  | FNATTR_Noredzone        -> Noredzone
-  | FNATTR_Noreturn         -> Noreturn
-  | FNATTR_Nounwind         -> Nounwind
-  | FNATTR_Optnone          -> assert false
-  | FNATTR_Optsize          -> Optsize
-  | FNATTR_Readnone         -> Readnone
-  | FNATTR_Readonly         -> Readonly
-  | FNATTR_Returns_twice    -> ReturnsTwice
-  | FNATTR_Sanitize_address -> assert false
-  | FNATTR_Sanitize_memory  -> assert false
-  | FNATTR_Sanitize_thread  -> assert false
-  | FNATTR_Ssp              -> Ssp
-  | FNATTR_Sspreq           -> Sspreq
-  | FNATTR_Sspstrong        -> assert false
-  | FNATTR_Uwtable          -> UWTable
+let fn_attr : Ollvm.Ast.fn_attr -> Llvm.AttrRepr.t =
+  let open Llvm in
+  function
+  | FNATTR_Alignstack i     -> AttrRepr.Enum(enum_attr_kind "alignstack", Int64.of_int i)
+  | FNATTR_Alwaysinline     -> AttrRepr.Enum(enum_attr_kind "alwaysinline", 0L)
+  | FNATTR_Builtin          -> AttrRepr.Enum(enum_attr_kind "builtin", 0L)
+  | FNATTR_Cold             -> AttrRepr.Enum(enum_attr_kind "cold", 0L)
+  | FNATTR_Inlinehint       -> AttrRepr.Enum(enum_attr_kind "inlinehint", 0L)
+  | FNATTR_Jumptable        -> AttrRepr.Enum(enum_attr_kind "jumptable", 0L)
+  | FNATTR_Minsize          -> AttrRepr.Enum(enum_attr_kind "minsize", 0L)
+  | FNATTR_Naked            -> AttrRepr.Enum(enum_attr_kind "naked", 0L)
+  | FNATTR_Nobuiltin        -> AttrRepr.Enum(enum_attr_kind "nobuiltin", 0L)
+  | FNATTR_Noduplicate      -> AttrRepr.Enum(enum_attr_kind "noduplicate", 0L)
+  | FNATTR_Noimplicitfloat  -> AttrRepr.Enum(enum_attr_kind "noimplicitfloat", 0L)
+  | FNATTR_Noinline         -> AttrRepr.Enum(enum_attr_kind "noinline", 0L)
+  | FNATTR_Nonlazybind      -> AttrRepr.Enum(enum_attr_kind "nonlazybind", 0L)
+  | FNATTR_Noredzone        -> AttrRepr.Enum(enum_attr_kind "noredzone", 0L)
+  | FNATTR_Noreturn         -> AttrRepr.Enum(enum_attr_kind "noreturn", 0L)
+  | FNATTR_Nounwind         -> AttrRepr.Enum(enum_attr_kind "nounwind", 0L)
+  | FNATTR_Optnone          -> AttrRepr.Enum(enum_attr_kind "optnone", 0L)
+  | FNATTR_Optsize          -> AttrRepr.Enum(enum_attr_kind "optsize", 0L)
+  | FNATTR_Readnone         -> AttrRepr.Enum(enum_attr_kind "readnone", 0L)
+  | FNATTR_Readonly         -> AttrRepr.Enum(enum_attr_kind "readonly", 0L)
+  | FNATTR_Returns_twice    -> AttrRepr.Enum(enum_attr_kind "returns_twice", 0L)
+  | FNATTR_Sanitize_address -> AttrRepr.Enum(enum_attr_kind "sanitize_address", 0L)
+  | FNATTR_Sanitize_memory  -> AttrRepr.Enum(enum_attr_kind "sanitize_memory", 0L)
+  | FNATTR_Sanitize_thread  -> AttrRepr.Enum(enum_attr_kind "sanitize_thread", 0L)
+  | FNATTR_Ssp              -> AttrRepr.Enum(enum_attr_kind "ssp", 0L)
+  | FNATTR_Sspreq           -> AttrRepr.Enum(enum_attr_kind "sspreq", 0L)
+  | FNATTR_Sspstrong        -> AttrRepr.Enum(enum_attr_kind "sspstrong", 0L)
+  | FNATTR_Uwtable          -> AttrRepr.Enum(enum_attr_kind "uwtable", 0L)
   | FNATTR_String s         -> assert false
   | FNATTR_Key_value (k, v) -> assert false
   | FNATTR_Attr_grp g       -> assert false
